@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: module-service
+  name: module-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: module-service
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: module-service
+    spec:
+      containers:
+        - env:
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://postgres:5432/postgres
+            - name: SPRING_PROFILES_ACTIVE
+              value: docker
+          image: cefriandy/module-service:latest
+          name: module-service
+          resources: {}
+      restartPolicy: Always
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: module-service
+  name: module-service
+spec:
+  ports:
+    - protocol: TCP
+      port: 7703
+      targetPort: 8883
+  selector:
+    app: module-service
